@@ -11,6 +11,7 @@ export const ABSTRACT = {
 
 export const STORAGE_KEY = 'pookie_session_v1';
 
+// ---------- Helpers to get provider ----------
 export function getEip1193() {
   return (typeof window !== 'undefined' && window.ethereum) ? window.ethereum : null;
 }
@@ -47,7 +48,7 @@ export function clearSession() {
 }
 
 // ---------- Chain Ensurer ----------
-async function ensureAbstractChain(provider) {
+export async function ensureAbstractChain(provider) {
   if (!provider?.request) throw new Error('Provider not available');
 
   const target = ABSTRACT.chainIdHex.toLowerCase();
@@ -75,9 +76,11 @@ async function ensureAbstractChain(provider) {
 }
 
 // ---------- Generic Connector ----------
-async function connectWallet(provider, type, ensureChain = false) {
+async function connectWallet(provider, type) {
   if (!provider) throw new Error(`${type} not detected. Please install/enable the extension.`);
-  if (ensureChain) await ensureAbstractChain(provider);
+
+  // --- always ensure Abstract Chain ---
+  await ensureAbstractChain(provider);
 
   const accounts = await provider.request({ method: 'eth_requestAccounts' });
   if (!accounts?.length) throw new Error('No accounts available.');
@@ -95,11 +98,11 @@ async function connectWallet(provider, type, ensureChain = false) {
 }
 
 // ---------- Connectors ----------
-export const connectMetaMask   = (opts) => connectWallet(getEip1193(), 'metamask', opts?.ensureAbstract);
-export const connectAGW       = (opts) => connectWallet(getAGW(), 'agw', opts?.ensureAbstract);
-export const connectBitget    = (opts) => connectWallet(window.bitget, 'bitget', opts?.ensureAbstract);
-export const connectSafePal   = (opts) => connectWallet(window.safepal, 'safepal', opts?.ensureAbstract);
-export const connectTrustWallet = (opts) => connectWallet(window.trustwallet, 'trustwallet', opts?.ensureAbstract);
+export const connectMetaMask      = () => connectWallet(getEip1193(), 'metamask');
+export const connectAGW          = () => connectWallet(getAGW(), 'agw');
+export const connectBitget       = () => connectWallet(window.bitget, 'bitget');
+export const connectSafePal      = () => connectWallet(window.safepal, 'safepal');
+export const connectTrustWallet  = () => connectWallet(window.trustwallet, 'trustwallet');
 
 // ---------- Session Restore ----------
 export async function tryRestoreSession() {
@@ -118,6 +121,9 @@ export async function tryRestoreSession() {
 
   const accounts = await provider.request({ method: 'eth_accounts' }).catch(() => []);
   if (!accounts?.length) { clearSession(); return false; }
+
+  // --- switch chain on restore as well ---
+  await ensureAbstractChain(provider);
 
   state.connected = true;
   state.address = accounts[0];

@@ -1,5 +1,5 @@
 // components/auth/connect.js
-import { connectMetaMask } from '../../func/wallet.js';
+import { connectMetaMask, ensureAbstractChain, getEip1193 } from '../../func/wallet.js';
 
 function h(tag, props = {}, ...children) {
   const svgTags = ['svg', 'path', 'circle', 'rect', 'line', 'polyline', 'polygon', 'g'];
@@ -92,7 +92,22 @@ export const Connect = {
         id: 'btnMM',
         label: 'Connect Wallet',
         color: '#1bf63cff',
-        onClick: () => connectMetaMask().then(() => onConnected?.())
+        onClick: async () => {
+          try {
+            const provider = getEip1193();
+            if (!provider) throw new Error('MetaMask not found');
+
+            // --- pastikan chain Abstract dulu ---
+            await ensureAbstractChain(provider);
+
+            // --- baru connect ---
+            await connectMetaMask();
+            onConnected?.();
+          } catch (err) {
+            console.error('Wallet connection failed:', err);
+            alert(err.message || 'Failed to connect wallet');
+          }
+        }
       })
     );
 
