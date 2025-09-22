@@ -47,15 +47,20 @@ export function renderBottomNav(navigate) {
           </button>
         </div>
 
-        <!-- Swap -->
-        <button data-route="swap" type="button"
-          class="navbtn flex items-center justify-center w-10 h-10 rounded-xl
-                 text-[#9aa4ad] hover:text-white transition">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>
-          </svg>
-        </button>
+        <!-- Swap (SOON) -->
+        <div class="relative group">
+          <button class="navbtn relative flex items-center justify-center w-10 h-10 rounded-xl
+                         text-[#9aa4ad] transition" data-soon="true" aria-disabled="true" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center rounded-xl 
+                        bg-gradient-to-r from-[#78e08f] to-[#FFD700] 
+                        text-black text-[10px] font-bold opacity-0 
+                        group-hover:opacity-90 transition">Soon</div>
+          </button>
+        </div>
 
         <!-- Staking (SOON) -->
         <div class="relative group">
@@ -88,12 +93,12 @@ export function renderBottomNav(navigate) {
     </div>
   `;
 
-  // hanya tombol routeable yang bisa diklik
+  // tombol routeable
   mount.querySelectorAll('.navbtn[data-route]').forEach(btn => {
     btn.addEventListener('click', () => navigate(btn.getAttribute('data-route')));
   });
 
-  // blok klik untuk tombol SOON
+  // blok tombol SOON
   mount.querySelectorAll('.navbtn[data-soon="true"]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -105,7 +110,6 @@ export function renderBottomNav(navigate) {
 }
 
 function styleBtn(btn, isActive) {
-  // reset
   btn.classList.remove(
     'rounded-full', 'w-12', 'h-12', 'g-gradient', 'text-black',
     'shadow-glow-gold', 'border', 'border-[#1a1f25]'
