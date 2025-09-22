@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pookie DApp: Your Gateway to Abstract Chain Tokens</title>
+  <meta name="description" content="Pookie DApp — Wallet, Dashboard, Swap, Staking" />
+  
+  <link rel="icon" type="image/png" href="./assets/pookieLogo.webp" />
+
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.11.1/dist/ethers.umd.min.js"></script>
+</head>
+<body class="bg-[#0b0d0f] text-[#e8edf1] min-h-screen">
+  <!-- Header -->
+  <header id="header"
+    class="mx-auto w-full px-4 md:w-4/5 lg:w-[70%] max-w-[1400px] pt-6 pb-3">
+  </header>
+
+  <!-- Router target -->
+  <main id="app"
+    class="mx-auto w-full px-4 md:w-4/5 lg:w-[70%] max-w-[1400px] pb-28">
+  </main>
+
+  <!-- Bottom nav (outer full, inner center) -->
+  <nav id="bottom-nav" class="fixed inset-x-0 bottom-0 z-30 safe-bottom bg-[#0c0f13]/80 backdrop-blur border-t border-[#1a1f25]">
+    <div id="bottom-nav-inner"
+      class="mx-auto w-full px-4 md:w-4/5 lg:w-[70%] max-w-[1400px]">
+    </div>
+  </nav>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
+
+  <!-- App bootstrap -->
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

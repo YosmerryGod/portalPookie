@@ -1,0 +1,35 @@
+:root {
+  color-scheme: dark;
+}
+
+/* Gradient hijau → emas */
+.g-gradient {
+  background: linear-gradient(135deg, #78e08f 0%, #FFD700 100%);
+}
+
+/* Text dengan gradient hijau → emas */
+.g-gradient-text {
+  background: linear-gradient(135deg, #78e08f 0%, #FFD700 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Glow hijau */
+.shadow-glow {
+  box-shadow: 
+    0 0 0 2px rgba(120, 224, 143, .15),
+    0 10px 30px rgba(120, 224, 143, .12);
+}
+
+/* Glow emas */
+.shadow-glow-gold {
+  box-shadow: 
+    0 0 0 2px rgba(255, 215, 0, .15),
+    0 10px 30px rgba(255, 215, 0, .12);
+}
+
+/* Untuk iOS safe area */
+.safe-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom), .75rem);
+}
