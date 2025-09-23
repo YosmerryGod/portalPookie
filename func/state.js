@@ -11,7 +11,7 @@ export const state = {
     { 
       symbol: 'POOKIE', 
       name: 'Pookie Token', 
-      address: '0xF0A8cD95Ac4Cb016Bd31335B417e3A1c8aB3Cc91', // <--- tambahkan address di sini
+      address: '0xffC795b90Df484AdF7eC2e31A0569269007cBFBE', // <--- tambahkan address di sini
       balance: 1234567.89, 
       decimals: 18, 
       icon: 'assets/pookieLogo.webp', 

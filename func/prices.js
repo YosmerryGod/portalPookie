@@ -134,7 +134,7 @@ export async function refreshPrices() {
 
       if (sym === 'POOKIE') {
         // harga sementara
-        prices[sym] = { price: 0.0002, change24h: 0, icon: t.icon || null };
+        prices[sym] = { price: 0.0006, change24h: 15, icon: t.icon || null };
         return;
       }
 

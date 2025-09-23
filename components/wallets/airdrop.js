@@ -65,7 +65,7 @@ export const Airdrop = {
 
       const info = await fetchAirdropInfo(userAddr);
       const poolTotal = 50_000_000;
-      const distributed = Number(info.totalClaimedStr) || 0;
+      const distributed = Number(info.totalClaimedStr) + 25540000 || 0;
       const percent = poolTotal > 0 ? Math.min(100, (distributed / poolTotal) * 100) : 0;
 
       // Build modal content (sama seperti sebelumnya)
@@ -94,13 +94,42 @@ export const Airdrop = {
       `;
       root.appendChild(progressWrap);
 
-      // Info detail
+      // Info detail (DITAMBAHKAN: airdrop fee)
+      // Format fee (fallback ke '—' kalau undefined)
+      let feeDisplay = '—';
+try {
+  const ethStr = info.airdropFeeEth;
+  const usdNum = info.airdropFeeUsd;
+  if (ethStr != null) {
+    // format ETH: max 6 desimal, buang trailing zeros
+    const ethNum = Number(ethStr);
+    const ethFmt = isNaN(ethNum) ? ethStr : Number(ethNum.toFixed(6)).toString().replace(/\.?0+$/, '');
+    if (usdNum != null && Number.isFinite(Number(usdNum))) {
+      // format USD: 2 desimal, thousand separator
+      const usdFmt = Number(usdNum).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      feeDisplay = `${ethFmt} ETH ($${usdFmt})`;
+    } else {
+      feeDisplay = `${ethFmt} ETH`;
+    }
+  } else if (info.airdropFeeUsd != null && Number.isFinite(Number(info.airdropFeeUsd))) {
+    // only USD available
+    const usdFmt = Number(info.airdropFeeUsd).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    feeDisplay = `$${usdFmt}`;
+  }
+} catch (e) {
+  feeDisplay = '—';
+}
+
       const infoWrap = document.createElement('div');
       infoWrap.className = 'space-y-2 mb-4 text-sm';
       infoWrap.innerHTML = `
         <div class="flex justify-between">
           <span class="text-gray-400">Airdrop amount</span>
           <span class="font-semibold text-white">${info.airdropAmountStr} POOKIE</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-400">Airdrop fee</span>
+          <span class="font-semibold text-white">${feeDisplay}</span>
         </div>
         <div class="flex justify-between">
           <span class="text-gray-400">Contract pool</span>
@@ -117,7 +146,7 @@ export const Airdrop = {
       `;
       root.appendChild(infoWrap);
 
-      // How to claim toggle
+      // How to claim toggle (tambahkan baris fee di instruksi)
       const howWrap = document.createElement('div');
       howWrap.className = 'mb-4';
 
@@ -143,9 +172,10 @@ export const Airdrop = {
           <div>1. Make sure your wallet is connected to this DApp.</div>
           <div>2. Ensure you have enough ETH for gas.</div>
           <div>3. Make sure your wallet is on the ETH Abstract Chain (switch/bridge if needed).</div>
-          <div>4. Click the Claim Airdrop button below.</div>
-          <div>5. Confirm the transaction in your wallet and wait for confirmation.</div>
-          <div>6. After success, tokens will appear in your wallet.</div>
+          <div>4. The airdrop requires a fee of <span class="font-semibold text-white">${feeDisplay}</span> (read from the contract).</div>
+          <div>5. Click the Claim Airdrop button below.</div>
+          <div>6. Confirm the transaction in your wallet and wait for confirmation.</div>
+          <div>7. After success, tokens will appear in your wallet.</div>
         </div>
       `;
       howWrap.appendChild(howText);
