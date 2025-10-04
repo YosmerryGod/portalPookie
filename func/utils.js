@@ -25,12 +25,35 @@ export function fmtAmount(x, max = 6) {
   return n.toLocaleString(undefined, { maximumFractionDigits: max });
 }
 
-/** Format harga USD mikro dengan desimal adaptif */
+/** Format harga USD mikro — helper (mengembalikan string mulai dengan $).
+ *  - >= 1 : 2 desimal (atau bigDigits)
+ *  - >= 0.01 : 4 desimal
+ *  - >= 0.0001 : 6 desimal
+ *  - < 0.0001 : eksponensial 3-signif (mis. $7.98e-6) untuk keterbacaan
+ */
 export function fmtPriceUsd(p) {
   const n = Number(p);
   if (!Number.isFinite(n)) return '$-';
-  const digits = n >= 1 ? 2 : n >= 0.01 ? 4 : n >= 0.0001 ? 6 : 8;
-  return `$${n.toLocaleString(undefined, { maximumFractionDigits: digits })}`;
+  const abs = Math.abs(n);
+
+  if (n === 0) return '$0';
+
+  if (abs >= 1) {
+    return '$' + n.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  }
+  if (abs >= 0.01) {
+    return '$' + n.toLocaleString(undefined, { maximumFractionDigits: 4 });
+  }
+  if (abs >= 0.0001) {
+    return '$' + n.toLocaleString(undefined, { maximumFractionDigits: 6 });
+  }
+
+  if (abs >= 0.000001) {
+    return '$' + n.toLocaleString(undefined, { maximumFractionDigits: 12 });
+  }
+
+  // very small numbers -> exponential with 3 significant digits
+  return '$' + n.toExponential(3);
 }
 
 /** Kalikan balance × price → nilai USD (null jika tak valid) */
@@ -40,13 +63,31 @@ export function calcUsd(balance, price) {
   return b * p;
 }
 
-/** Format nilai USD, dengan presisi adaptif untuk nilai kecil */
+/** Format nilai USD, dengan presisi adaptif untuk nilai kecil.
+ *  - val: number
+ *  - bigDigits: jumlah desimal untuk nilai >= 1 (default 2)
+ *  - behavior: konsisten dengan fmtPriceUsd
+ */
 export function fmtUsd(val, bigDigits = 2) {
   if (val == null) return '$-';
   const n = Number(val);
   if (!Number.isFinite(n)) return '$-';
-  const digs = n >= 1 ? bigDigits : 4;
-  return `$${n.toLocaleString(undefined, { maximumFractionDigits: digs })}`;
+  const abs = Math.abs(n);
+
+  if (n === 0) return '$0';
+
+  if (abs >= 1) {
+    return '$' + n.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: bigDigits });
+  }
+  if (abs >= 0.01) {
+    return '$' + n.toLocaleString(undefined, { maximumFractionDigits: 4 });
+  }
+  if (abs >= 0.0001) {
+    return '$' + n.toLocaleString(undefined, { maximumFractionDigits: 6 });
+  }
+
+  // very small numbers -> exponential with 3 significant digits
+  return '$' + n.toExponential(3);
 }
 
 /** Util kecil tambahan */

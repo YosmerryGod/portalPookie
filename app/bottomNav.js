@@ -4,6 +4,7 @@ import { $ } from '../func/utils.js';
 
 export function renderBottomNav(navigate) {
   const mount = $('#bottom-nav');
+  if (!mount) return;
   if (!state.connected) {
     mount.innerHTML = '';
     return;
@@ -47,34 +48,28 @@ export function renderBottomNav(navigate) {
           </button>
         </div>
 
-        <!-- Swap (SOON) -->
-        <div class="relative group">
-          <button class="navbtn relative flex items-center justify-center w-10 h-10 rounded-xl
-                         text-[#9aa4ad] transition" data-soon="true" aria-disabled="true" type="button">
+        <!-- Swap (routeable) -->
+        <div class="relative">
+          <button data-route="swap" type="button"
+            class="navbtn relative flex items-center justify-center w-10 h-10 rounded-xl
+                   text-[#9aa4ad] hover:text-white transition">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none"
                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>
             </svg>
-            <div class="absolute inset-0 flex items-center justify-center rounded-xl 
-                        bg-gradient-to-r from-[#78e08f] to-[#FFD700] 
-                        text-black text-[10px] font-bold opacity-0 
-                        group-hover:opacity-90 transition">Soon</div>
           </button>
         </div>
 
-        <!-- Staking (SOON) -->
-        <div class="relative group">
-          <button class="navbtn relative flex items-center justify-center w-10 h-10 rounded-xl
-                         text-[#9aa4ad] transition" data-soon="true" aria-disabled="true" type="button">
+        <!-- Staking (routeable) -->
+        <div class="relative">
+          <button data-route="staking" type="button"
+            class="navbtn relative flex items-center justify-center w-10 h-10 rounded-xl
+                   text-[#9aa4ad] hover:text-white transition">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none"
                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"/>
               <path d="M16 10h.01"/><path d="M2 8v1a2 2 0 0 0 2 2h1"/>
             </svg>
-            <div class="absolute inset-0 flex items-center justify-center rounded-xl 
-                        bg-gradient-to-r from-[#78e08f] to-[#FFD700] 
-                        text-black text-[10px] font-bold opacity-0 
-                        group-hover:opacity-90 transition">Soon</div>
           </button>
         </div>
 
@@ -103,6 +98,9 @@ export function renderBottomNav(navigate) {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
+      // visual feedback kecil
+      btn.classList.add('animate-pulse');
+      setTimeout(() => btn.classList.remove('animate-pulse'), 500);
     }, { capture: true });
   });
 
@@ -112,9 +110,9 @@ export function renderBottomNav(navigate) {
 function styleBtn(btn, isActive) {
   btn.classList.remove(
     'rounded-full', 'w-12', 'h-12', 'g-gradient', 'text-black',
-    'shadow-glow-gold', 'border', 'border-[#1a1f25]'
+    'shadow-glow-gold', 'border', 'border-[#1a1f25]',
+    'rounded-xl', 'w-10', 'h-10', 'text-[#9aa4ad]', 'hover:text-white'
   );
-  btn.classList.remove('rounded-xl', 'w-10', 'h-10', 'text-[#9aa4ad]', 'hover:text-white');
 
   if (isActive) {
     btn.classList.add(

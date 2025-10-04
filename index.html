@@ -8,12 +8,16 @@
   
   <link rel="icon" type="image/png" href="./assets/pookieLogo.webp" />
 
-  
+  <!-- Tailwind CDN (development). Untuk production: compile Tailwind. -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Custom styles -->
   <link rel="stylesheet" href="./style.css" />
+  <!-- Ethers UMD -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.11.1/dist/ethers.umd.min.js"></script>
 </head>
 <body class="bg-[#0b0d0f] text-[#e8edf1] min-h-screen">
+
   <!-- Header -->
   <header id="header"
     class="mx-auto w-full px-4 md:w-4/5 lg:w-[70%] max-w-[1400px] pt-6 pb-3">
@@ -31,10 +35,46 @@
     </div>
   </nav>
 
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+  <!-- jsQR lib (QR scanning, optional) -->
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 
+  <!-- Deteksi Windows: jika true, paksa container jadi 100% lebar -->
+  <script>
+  (function(){
+    try {
+      const isWindows = typeof navigator !== 'undefined' &&
+        (navigator.userAgent.includes('Windows') || (navigator.platform && navigator.platform.includes('Win')));
+      if (!isWindows) return;
 
-  <!-- App bootstrap -->
+      // tambahkan class ke <html> dan <body> untuk stylesheet fallback
+      document.documentElement.classList.add('is-windows');
+      document.body.classList.add('is-windows');
+
+      // elemen yang mau dipaksa 100%
+      const selectors = ['#header', '#app', '#bottom-nav-inner'];
+      selectors.forEach(selector => {
+        const el = document.querySelector(selector);
+        if (!el) return;
+        // override inline supaya pasti menang atas Tailwind CDN
+        el.style.maxWidth = 'none';
+        el.style.width = '100%';
+        el.style.paddingLeft = '1rem';
+        el.style.paddingRight = '1rem';
+      });
+
+      // jika menggunakan elemen container lain (mis. mount point), bisa override juga:
+      // const extra = document.querySelector('#app > .container');
+      // if (extra) { extra.style.maxWidth = 'none'; extra.style.width = '100%'; }
+
+      // debug (bisa dihapus)
+      console.debug('Pookie DApp: Windows detected — forced 100% width applied.');
+    } catch (e) {
+      console.warn('is-windows script failed', e);
+    }
+  })();
+  </script>
+
+  <!-- App bootstrap (module) -->
   <script type="module" src="./app.js"></script>
 </body>
 </html>

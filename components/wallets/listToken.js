@@ -137,6 +137,9 @@ export const TokenList = {
       const priceLn = Number.isFinite(price) ? fmtUsd(price) : '$-';
       const sym     = safeSymbol(t);
 
+      // small card/badge next to symbol (only if t.card exists)
+      const cardHtml = t.card ? `<span class="ml-2 inline-flex items-center px-2 py-[2px] rounded-md text-[11px] border border-[#1f2428] bg-[#0b0f12] text-[#9aa4ad] min-w-[36px] justify-center">${String(t.card)}</span>` : '';
+
       // enable swipe only if token is user-added and has an address
       const canDelete = t.userAdded && t.address;
 
@@ -162,10 +165,10 @@ export const TokenList = {
 
               <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between">
-                  <!-- left: symbol + % + price -->
+                  <!-- left: symbol + card + % + price -->
                   <div class="flex flex-col">
                     <div class="font-semibold flex items-center leading-tight" title="${sym}">
-                      ${sym} ${change}
+                      ${sym} ${cardHtml} ${change}
                     </div>
                     <div class="text-xs text-[#9aa4ad] leading-tight">${priceLn}</div>
                   </div>

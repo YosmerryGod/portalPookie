@@ -64,7 +64,7 @@ export const Wallet = {
     });
 
     // Mount Banner
-    Banner.mount(root);
+
 
     // Dropdown
     const cleanupDropdown = bindAddressDropdown(root);

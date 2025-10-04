@@ -12,9 +12,11 @@ import { renderBottomNav, setActiveNav } from './app/bottomNav.js';
 
 import { Wallet }    from './components/wallets/wallet.js';
 import { Dashboard } from './components/dashboard/dashboar.js';
-import { Trade }     from './components/trade/trade.js';
 import { Staking }   from './components/staking/staking.js';
 import { Connect }   from './components/auth/connect.js';
+
+import { Swap } from './components/trade/swap.js';
+
 
 // ---------- Global balance loading overlay (like SendModal) ----------
 let balanceLoadingEl = null;
@@ -88,7 +90,7 @@ const routes = {
   },
   wallet:    Wallet,
   dashboard: Dashboard,
-  swap:      Trade,
+  swap:      Swap,
   staking:   Staking,
 };
 
@@ -138,7 +140,20 @@ async function navigate(route) {
     stopAutoRefresh();
   }
 
-  await routes[route]?.mount(container);
+    // call mount() if component exposes it; otherwise fallback ke render()
+  const comp = routes[route];
+  if (!comp) {
+    console.error('Route not found:', route);
+  } else if (typeof comp.mount === 'function') {
+    await comp.mount(container);
+  } else if (typeof comp.render === 'function') {
+    // render may be synchronous; await if it returns a promise
+    const r = comp.render(container);
+    if (r && typeof r.then === 'function') await r;
+  } else {
+    console.error('Route component has no mount or render method:', route, comp);
+  }
+
 
   if (state.connected) setActiveNav(route);
 }

@@ -10,8 +10,8 @@ export const state = {
   tokens: [
     { 
       symbol: 'POOKIE', 
-      name: 'Pookie Token', 
-      address: '0xffC795b90Df484AdF7eC2e31A0569269007cBFBE', // <--- tambahkan address di sini
+      name: 'Pookie Token',
+      address: '0x4ad9e272fc02afc518f402317ca9eeaebed96614', // <--- tambahkan address di sini
       balance: 1234567.89, 
       decimals: 18, 
       icon: 'assets/pookieLogo.webp', 
@@ -25,6 +25,18 @@ export const state = {
       icon: 'assets/ETH.webp', 
       usd: null 
     },
+  ],
+
+  tokens_trade: [
+    { 
+      symbol: 'POOKIE', 
+      name: 'Pookie Token',
+      address: '0x4ad9e272fc02afc518f402317ca9eeaebed96614', // <--- tambahkan address di sini
+      balance: 1234567.89, 
+      decimals: 18, 
+      icon: 'assets/pookieLogo.webp', 
+      usd: null 
+    }
   ],
 
   // ===== Mock activity =====

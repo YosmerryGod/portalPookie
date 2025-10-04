@@ -65,7 +65,7 @@ export const Airdrop = {
 
       const info = await fetchAirdropInfo(userAddr);
       const poolTotal = 50_000_000;
-      const distributed = Number(info.totalClaimedStr) + 25540000 || 0;
+      const distributed = Number(info.totalClaimedStr) + 400000 || 0;
       const percent = poolTotal > 0 ? Math.min(100, (distributed / poolTotal) * 100) : 0;
 
       // Build modal content (sama seperti sebelumnya)

@@ -14,7 +14,8 @@ import {
 
 // ====== KONFIG ======
 const ADDR = {
-  POOKIE: 0xffC795b90Df484AdF7eC2e31A0569269007cBFBE,
+  POOKIE_Mainnet: '0x4ad9e272fc02afc518f402317ca9eeaebed96614',
+  Pookie_Airdrop: '0xffC795b90Df484AdF7eC2e31A0569269007cBFBE'
 };
 const ABSTRACT_DEC = 2741;
 const ABSTRACT_HEX = '0xAB5';
@@ -47,9 +48,17 @@ export async function getEthBalance(address, providerOverride) {
   if (!isAddress(address)) throw new Error('❌ Address tidak valid');
   const provider = makeProvider(providerOverride);
   await ensureAbstract(provider);
+
+  const net = await provider.getNetwork();
+  console.log("[getEthBalance] chainId:", net.chainId.toString());
+  console.log("[getEthBalance] addr:", getAddress(address));
+
   const wei = await provider.getBalance(getAddress(address));
+  console.log("[getEthBalance] raw balance:", wei.toString());
+
   return formatEther(wei);
 }
+
 
 // ====== ERC20 ======
 export async function getErc20Balance(address, tokenAddress, providerOverride, decimalsHint) {
