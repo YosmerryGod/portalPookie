@@ -10,8 +10,13 @@ export function createSlippageControl(stateObj, onChange) {
   presets.forEach(p => {
     const b = el('button', {
       style: {
-        padding: '6px 10px', borderRadius: '999px', border: `1px solid #e6e7ea`, cursor: 'pointer',
-        background: stateObj.slippage === p ? '#16a34a' : '#fff', color: stateObj.slippage === p ? '#000' : '#6b7280', fontWeight: 700
+        padding: '6px 10px', 
+        borderRadius: '999px', 
+        border: `1px solid #e6e7ea`, 
+        cursor: 'pointer',
+        background: stateObj.slippage === p ? '#16a34a' : '#f3f4f6', 
+        color: stateObj.slippage === p ? '#000000ff' : '#000', 
+        fontWeight: 700
       },
       onClick: () => {
         stateObj.slippage = p;
@@ -24,8 +29,19 @@ export function createSlippageControl(stateObj, onChange) {
   });
 
   const input = el('input', {
-    type: 'number', step: '0.1', min: '0', max: '50', value: stateObj.slippage,
-    style: { width: '70px', padding: '6px 8px', borderRadius: '8px', border: `1px solid #e6e7ea`, background: '#2f2f2fff' },
+    type: 'number', 
+    step: '0.1', 
+    min: '0', 
+    max: '50', 
+    value: stateObj.slippage,
+    style: { 
+      width: '70px', 
+      padding: '6px 8px', 
+      borderRadius: '8px', 
+      border: `1px solid #e6e7ea`, 
+      background: '#f3f4f6', 
+      color: '#000' 
+    },
     onInput: (e) => {
       const v = Number(e.target.value);
       if (!isNaN(v) && v >= 0 && v <= 50) {
@@ -42,8 +58,8 @@ export function createSlippageControl(stateObj, onChange) {
     btns.forEach((b, i) => {
       const p = presets[i];
       Object.assign(b.style, {
-        background: stateObj.slippage === p ? '#16a34a' : '#fff',
-        color: stateObj.slippage === p ? '#000' : '#6b7280'
+        background: stateObj.slippage === p ? '#16a34a' : '#f3f4f6',
+        color: stateObj.slippage === p ? '#fff' : '#000'
       });
     });
     input.value = stateObj.slippage;

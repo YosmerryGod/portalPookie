@@ -5,7 +5,7 @@ import { getTokenSummary } from '../../func/tokenInformation.js';
 import { fmtUsd } from '../../func/utils.js';
 
 /**
- * Show a modal with token details.
+ * Show a mobile-responsive modal with token details.
  * Accepts either a token address string or a token object { address, symbol, name, icon }
  */
 export async function showTokenDetailModal(tokenOrAddress) {
@@ -13,66 +13,63 @@ export async function showTokenDetailModal(tokenOrAddress) {
   const address = (typeof tokenOrAddress === 'string') ? tokenOrAddress : (tokenOrAddress && tokenOrAddress.address) || null;
   const preview = (typeof tokenOrAddress === 'object') ? tokenOrAddress : null;
 
+  // Modal overlay - responsive padding
   const modal = el('div', {
-    style: {
-      position: 'fixed', inset: '0', background: 'rgba(0,0,0,0.5)', zIndex: 1500,
-      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px'
-    },
+    className: 'fixed inset-0 bg-black/50 z-[1500] flex items-center justify-center p-4 sm:p-5',
     onclick: (e) => { if (e.target === modal) modal.remove(); }
   });
 
+  // Modal content - responsive width and max-height
   const content = el('div', {
-    style: {
-      width: '100%', maxWidth: '720px', borderRadius: '12px', padding: '18px',
-      background: theme.bg.card || '#0f0f0f', color: theme.text.primary, boxShadow: theme.shadow.soft
-    }
+    className: 'w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-gray-900 rounded-xl sm:rounded-2xl p-4 sm:p-5 shadow-2xl'
   });
 
-  const header = el('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', marginBottom: '8px' } },
-    el('div', { style: { display: 'flex', gap: '12px', alignItems: 'center' } },
-      // Token icon - show image if available, fallback to symbol
+  // Header - responsive layout
+  const header = el('div', { 
+    className: 'flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 pb-4 border-b border-gray-800'
+  },
+    // Token info section
+    el('div', { className: 'flex gap-3 items-center w-full sm:w-auto' },
+      // Token icon - responsive size
       preview?.icon 
         ? el('img', { 
             src: preview.icon, 
-            style: { width: '44px', height: '44px', borderRadius: '10px', objectFit: 'cover' },
+            className: 'w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover flex-shrink-0',
             onerror: function() { 
-              // If image fails, hide it and show fallback
               this.style.display = 'none';
               const fallback = el('div', { 
-                style: { 
-                  width: '44px', height: '44px', borderRadius: '10px', 
-                  background: theme.bg.input, display: 'flex', 
-                  alignItems: 'center', justifyContent: 'center', fontWeight: 800 
-                } 
+                className: 'w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gray-700 flex items-center justify-center font-black text-white text-lg'
               }, (preview?.symbol || 'T').slice(0, 2));
               this.parentElement.insertBefore(fallback, this);
             }
           })
         : el('div', { 
-            style: { 
-              width: '44px', height: '44px', borderRadius: '10px', 
-              background: theme.bg.input, display: 'flex', 
-              alignItems: 'center', justifyContent: 'center', fontWeight: 800 
-            } 
+            className: 'w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gray-700 flex items-center justify-center font-black text-white text-lg flex-shrink-0'
           }, (preview?.symbol || 'T').slice(0, 2)),
-      el('div', { style: { display: 'flex', flexDirection: 'column' } },
-        el('div', { style: { fontSize: '16px', fontWeight: 900 } }, preview?.symbol || 'Unknown'),
-        el('div', { style: { fontSize: '12px', color: theme.text.muted } }, preview?.name || 'Token')
+      
+      // Token name and symbol
+      el('div', { className: 'flex flex-col min-w-0' },
+        el('div', { className: 'text-base sm:text-lg font-black text-white truncate' }, preview?.symbol || 'Unknown'),
+        el('div', { className: 'text-xs sm:text-sm text-gray-400 truncate' }, preview?.name || 'Token')
       )
     ),
-    el('div', { style: { display: 'flex', gap: '8px', alignItems: 'center' } },
+    
+    // Action buttons - responsive sizing
+    el('div', { className: 'flex gap-2 w-full sm:w-auto' },
       el('button', {
-        style: { padding: '8px 12px', borderRadius: '8px', border: 'none', background: theme.brand.green, cursor: 'pointer', color: '#fff', fontWeight: 600 },
+        className: 'flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white text-xs sm:text-sm font-semibold transition-colors',
         onclick: (e) => { 
           const btn = e.target;
           navigator.clipboard?.writeText(address || '')
             .then(() => { 
               const originalText = btn.textContent;
               btn.textContent = 'Copied!';
-              btn.style.background = theme.brand.altGreen || '#00ff00';
+              btn.classList.remove('bg-green-500');
+              btn.classList.add('bg-green-600');
               setTimeout(() => { 
                 btn.textContent = originalText;
-                btn.style.background = theme.brand.green;
+                btn.classList.remove('bg-green-600');
+                btn.classList.add('bg-green-500');
               }, 1500);
             }) 
             .catch(() => { 
@@ -80,9 +77,9 @@ export async function showTokenDetailModal(tokenOrAddress) {
               setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
             }); 
         }
-      }, 'Copy Address'),
+      }, 'Copy'),
       el('button', {
-        style: { padding: '8px 12px', borderRadius: '8px', border: 'none', background: theme.brand.red, color: '#fff', cursor: 'pointer', fontWeight: 600 },
+        className: 'flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs sm:text-sm font-semibold transition-colors',
         onclick: () => modal.remove()
       }, 'Close')
     )
@@ -90,10 +87,12 @@ export async function showTokenDetailModal(tokenOrAddress) {
 
   content.appendChild(header);
 
-  // loading placeholder
-  const body = el('div', { style: { minHeight: '120px', display: 'flex', gap: '16px', alignItems: 'flex-start' } },
-    el('div', { style: { flex: 1 } },
-      el('div', { style: { fontSize: '14px', color: theme.text.muted } }, 'Loading token data...')
+  // Loading placeholder
+  const body = el('div', { 
+    className: 'min-h-[120px] flex gap-4 items-start'
+  },
+    el('div', { className: 'flex-1' },
+      el('div', { className: 'text-sm text-gray-400' }, 'Loading token data...')
     )
   );
 
@@ -101,10 +100,10 @@ export async function showTokenDetailModal(tokenOrAddress) {
   modal.appendChild(content);
   document.body.appendChild(modal);
 
-  // If we don't have an address, attempt to use preview.address or fail
+  // Validate address
   if (!address) {
     body.innerHTML = '';
-    body.appendChild(el('div', { style: { color: theme.text.muted } }, 'No token address provided.'));
+    body.appendChild(el('div', { className: 'text-gray-400 text-sm' }, 'No token address provided.'));
     return;
   }
 
@@ -113,17 +112,18 @@ export async function showTokenDetailModal(tokenOrAddress) {
 
     if (!info || !info.success) {
       body.innerHTML = '';
-      body.appendChild(el('div', { style: { color: theme.text.muted } }, `Failed to load token info: ${info?.error || 'unknown'}`));
+      body.appendChild(el('div', { className: 'text-gray-400 text-sm' }, 
+        `Failed to load token info: ${info?.error || 'unknown'}`));
       return;
     }
 
     // Update header icon if we got icon from API
     if (info.icon && !preview?.icon) {
-      const headerIcon = header.querySelector('img, div[style*="44px"]');
+      const headerIcon = header.querySelector('img, div.w-12');
       if (headerIcon && headerIcon.tagName !== 'IMG') {
         const img = el('img', { 
           src: info.icon, 
-          style: { width: '44px', height: '44px', borderRadius: '10px', objectFit: 'cover' },
+          className: 'w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover',
           onerror: function() { this.style.display = 'none'; }
         });
         headerIcon.replaceWith(img);
@@ -131,129 +131,127 @@ export async function showTokenDetailModal(tokenOrAddress) {
     }
 
     const price = isFinite(info.priceUsd) ? `$${Number(info.priceUsd).toFixed(6)}` : 'N/A';
-    const change = isFinite(info.priceChange24h) ? `${info.priceChange24h > 0 ? '+' : ''}${Number(info.priceChange24h).toFixed(2)}%` : 'N/A';
+    const change = isFinite(info.priceChange24h) 
+      ? `${info.priceChange24h > 0 ? '+' : ''}${Number(info.priceChange24h).toFixed(2)}%` 
+      : 'N/A';
 
     body.innerHTML = '';
 
-    const leftCol = el('div', { style: { flex: '1 1 55%' } },
-      el('div', { style: { display: 'flex', justifyContent: 'space-between', gap: '12px', alignItems: 'center' } },
-        el('div', { style: { display: 'flex', flexDirection: 'column' } },
-          el('div', { style: { fontWeight: 900, fontSize: '18px' } }, `${info.name} (${info.symbol})`),
-          el('div', { style: { fontSize: '12px', color: theme.text.muted } }, info.address)
+    // Left Column - responsive flex layout
+    const leftCol = el('div', { className: 'flex-1 space-y-4' },
+      // Price section - responsive layout
+      el('div', { className: 'flex flex-col sm:flex-row justify-between gap-3 sm:gap-4 items-start sm:items-center' },
+        el('div', { className: 'flex flex-col' },
+          el('div', { className: 'font-black text-base sm:text-lg text-white' }, 
+            `${info.name} (${info.symbol})`),
+          el('div', { className: 'text-xs text-gray-400 break-all mt-1' }, info.address)
         ),
-        el('div', { style: { textAlign: 'right' } },
-          el('div', { style: { fontWeight: 900, fontSize: '18px' } }, price),
-          el('div', { style: { fontSize: '12px', color: info.priceChange24h >= 0 ? theme.brand.altGreen : theme.brand.red } }, change)
+        el('div', { className: 'text-right' },
+          el('div', { className: 'font-black text-base sm:text-lg text-white' }, price),
+          el('div', { 
+            className: `text-xs sm:text-sm font-bold ${
+              info.priceChange24h >= 0 ? 'text-green-400' : 'text-red-400'
+            }` 
+          }, change)
         )
       ),
 
-      el('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '14px' } },
-        el('div', { style: { fontSize: '12px', color: theme.text.muted } }, 'Market Cap'),
-        el('div', { style: { fontSize: '12px', textAlign: 'right', fontWeight: 800 } }, info.marketCap ? fmtUsd(info.marketCap) : 'N/A'),
-
-        el('div', { style: { fontSize: '12px', color: theme.text.muted } }, 'FDV'),
-        el('div', { style: { fontSize: '12px', textAlign: 'right', fontWeight: 800 } }, info.fdv ? fmtUsd(info.fdv) : 'N/A'),
-
-        el('div', { style: { fontSize: '12px', color: theme.text.muted } }, '24h Volume'),
-        el('div', { style: { fontSize: '12px', textAlign: 'right', fontWeight: 800 } }, info.volume24h ? fmtUsd(info.volume24h) : 'N/A'),
-
-        el('div', { style: { fontSize: '12px', color: theme.text.muted } }, 'Liquidity'),
-        el('div', { style: { fontSize: '12px', textAlign: 'right', fontWeight: 800 } }, info.liquidity ? fmtUsd(info.liquidity) : 'N/A')
+      // Stats grid - responsive columns
+      el('div', { className: 'grid grid-cols-2 gap-3 sm:gap-4' },
+        // Market Cap
+        el('div', { className: 'space-y-1' },
+          el('div', { className: 'text-xs text-gray-400' }, 'Market Cap'),
+          el('div', { className: 'text-xs sm:text-sm font-black text-white' }, 
+            info.marketCap ? fmtUsd(info.marketCap) : 'N/A')
+        ),
+        // FDV
+        el('div', { className: 'space-y-1' },
+          el('div', { className: 'text-xs text-gray-400' }, 'FDV'),
+          el('div', { className: 'text-xs sm:text-sm font-black text-white' }, 
+            info.fdv ? fmtUsd(info.fdv) : 'N/A')
+        ),
+        // 24h Volume
+        el('div', { className: 'space-y-1' },
+          el('div', { className: 'text-xs text-gray-400' }, '24h Volume'),
+          el('div', { className: 'text-xs sm:text-sm font-black text-white' }, 
+            info.volume24h ? fmtUsd(info.volume24h) : 'N/A')
+        ),
+        // Liquidity
+        el('div', { className: 'space-y-1' },
+          el('div', { className: 'text-xs text-gray-400' }, 'Liquidity'),
+          el('div', { className: 'text-xs sm:text-sm font-black text-white' }, 
+            info.liquidity ? fmtUsd(info.liquidity) : 'N/A')
+        )
       ),
 
-      el('div', { style: { marginTop: '14px', fontSize: '13px', color: theme.text.muted } }, 
+      // Description
+      el('div', { className: 'text-xs sm:text-sm text-gray-400 leading-relaxed' }, 
         info.name || 'No description available'
       )
     );
 
-    const rightCol = el('div', { style: { flex: '1 1 40%', display: 'flex', flexDirection: 'column', gap: '10px' } },
-      el('div', { style: { fontSize: '12px', color: theme.text.muted } }, 'Pair Address'),
-      el('div', { style: { fontSize: '12px', wordBreak: 'break-all', fontWeight: 800 } }, info.pairAddress || 'N/A'),
-      el('div', { style: { display: 'flex', gap: '8px', marginTop: '8px', flexWrap: 'wrap' } },
-        // Dynamic button: Moonshot if isMoonshot, DexScreener otherwise
+    // Right Column - responsive layout
+    const rightCol = el('div', { className: 'flex-1 flex flex-col gap-3 sm:gap-4 mt-4 sm:mt-0' },
+      // Pair Address
+      el('div', { className: 'space-y-2' },
+        el('div', { className: 'text-xs text-gray-400' }, 'Pair Address'),
+        el('div', { className: 'text-xs font-mono font-black text-white break-all bg-gray-800 p-2 rounded' }, 
+          info.pairAddress || 'N/A')
+      ),
+      
+      // Action buttons
+      el('div', { className: 'flex flex-wrap gap-2' },
         info.url ? el('a', { 
           href: info.url, 
-          target: '_blank', 
-          style: { 
-            padding: '8px 10px', 
-            borderRadius: '8px', 
-            border: 'none', 
-            background: theme.brand.green, 
-            textDecoration: 'none', 
-            color: '#fff', 
-            fontWeight: 600,
-            fontSize: '12px'
-          } 
-        }, info.isMoonshot ? 'Moonshot' : 'DexScreener') : null,
+          target: '_blank',
+          className: 'inline-flex items-center px-3 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white text-xs font-semibold no-underline transition-colors'
+        }, info.isMoonshot ? '🚀 Moonshot' : '📊 DexScreener') : null,
         el('a', { 
           href: `https://abscan.org/token/${info.address}`, 
-          target: '_blank', 
-          style: { 
-            padding: '8px 10px', 
-            borderRadius: '8px', 
-            border: 'none', 
-            background: theme.brand.green, 
-            textDecoration: 'none', 
-            color: '#fff', 
-            fontWeight: 600,
-            fontSize: '12px'
-          } 
-        }, 'View on Explorer')
+          target: '_blank',
+          className: 'inline-flex items-center px-3 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white text-xs font-semibold no-underline transition-colors'
+        }, '🔍 Explorer')
       ),
 
       // Moonshot bonding curve progress bar
       info.isMoonshot && info.moonshotProgress ? el('div', { 
-        style: { 
-          marginTop: '12px', 
-          padding: '10px', 
-          borderRadius: '8px', 
-          background: theme.bg.input 
-        } 
+        className: 'mt-3 p-3 rounded-lg bg-gray-800'
       },
         el('div', { 
-          style: { 
-            fontSize: '11px', 
-            color: theme.text.muted, 
-            marginBottom: '6px',
-            display: 'flex',
-            justifyContent: 'space-between'
-          } 
+          className: 'flex justify-between items-center mb-2'
         },
-          el('span', {}, 'Bonding Curve Progress'),
-          el('span', { style: { fontWeight: 800, color: '#ffd700' } }, `${Number(info.moonshotProgress).toFixed(2)}%`)
+          el('span', { className: 'text-xs text-gray-400' }, 'Bonding Curve Progress'),
+          el('span', { className: 'text-xs font-black text-yellow-400' }, 
+            `${Number(info.moonshotProgress).toFixed(2)}%`)
         ),
         el('div', { 
-          style: { 
-            width: '100%', 
-            height: '8px', 
-            background: '#1a1a1a', 
-            borderRadius: '4px',
-            overflow: 'hidden',
-            border: '1px solid #333'
-          } 
+          className: 'w-full h-2 bg-gray-900 rounded-full overflow-hidden border border-gray-700'
         },
           el('div', { 
-            style: { 
-              width: `${Math.min(Number(info.moonshotProgress) || 0, 100)}%`, 
-              height: '100%', 
-              background: 'linear-gradient(90deg, #ffd700 0%, #ffed4e 100%)',
-              transition: 'width 0.3s ease',
-              boxShadow: '0 0 10px rgba(255, 215, 0, 0.5)'
-            } 
+            className: 'h-full bg-gradient-to-r from-yellow-400 to-yellow-300 transition-all duration-300 shadow-[0_0_10px_rgba(255,215,0,0.5)]',
+            style: { width: `${Math.min(Number(info.moonshotProgress) || 0, 100)}%` }
           })
         )
       ) : null,
 
-      el('div', { style: { marginTop: '8px', fontSize: '12px', color: theme.text.muted } }, `Verified DEX: ${info.dex || 'Unknown'}`),
-      el('div', { style: { marginTop: '6px', fontSize: '12px', color: theme.text.muted } }, `Is Moonshot Token: ${info.isMoonshot ? 'Yes' : 'No'}`)
+      // Additional info - responsive text
+      el('div', { className: 'space-y-1.5 text-xs text-gray-400' },
+        el('div', {}, `Verified DEX: ${info.dex || 'Unknown'}`),
+        el('div', {}, `Is Moonshot Token: ${info.isMoonshot ? 'Yes ✅' : 'No'}`)
+      )
     );
 
-    body.appendChild(leftCol);
-    body.appendChild(rightCol);
+    // Responsive wrapper - stacks on mobile, side-by-side on desktop
+    const columnsWrapper = el('div', { 
+      className: 'flex flex-col sm:flex-row gap-4 sm:gap-6' 
+    }, leftCol, rightCol);
+
+    body.appendChild(columnsWrapper);
 
   } catch (err) {
     console.error('[detailToken] error', err);
     body.innerHTML = '';
-    body.appendChild(el('div', { style: { color: theme.text.muted } }, `Error loading token details: ${err.message || err}`));
+    body.appendChild(el('div', { className: 'text-red-400 text-sm' }, 
+      `Error loading token details: ${err.message || err}`));
   }
 }
